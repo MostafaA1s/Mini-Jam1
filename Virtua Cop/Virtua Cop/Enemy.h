@@ -7,16 +7,23 @@ class Enemy : public Human
 	int damage shoot -> counter two bullets until the player is damaged
 	shoot()
 	*/
-private: 
-	int damageShoot;
 	public:
+		int damageShoot;
 		sf::Sprite indicator;
+		sf::Clock indicatorColorClock; // when can the indicator color changes
+		sf::Clock shootClock; // when can the enemy shoots
 
 		Enemy();
-		Enemy(int health, int damageShoot, const std::string& filePath);
+		Enemy(int health, int damageShoot);
 		~Enemy();
-		void Shoot(int& playerHealth);
-		void SpawnIndicator(const std::string& filePath);
+		void Shoot();
+
+		void SpawnIndicator(const std::string& filePath, sf::Window& window);
+
+		void UpdateIndicator();
+
+		void setEnemySprite(const std::string& filePath, sf::Window& window);
+
 
 
 		
