@@ -3,7 +3,7 @@
 
 int main() {
     // SFML Setup
-    sf::RenderWindow window(sf::VideoMode(1920, 1080), "Box2D + SFML Test");
+    sf::RenderWindow window(sf::VideoMode(400, 400)/*sf::VideoMode(1920, 1080)*/, "Box2D + SFML Test");
     window.setFramerateLimit(60);
 
     // Box2D World Setup
