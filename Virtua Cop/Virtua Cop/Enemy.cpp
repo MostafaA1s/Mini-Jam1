@@ -40,10 +40,12 @@ void Enemy::Shoot()
     {
         //Player is damaged
         std::cout << "damaging\n" + damageShoot << "\n";
-        shootClock.restart(); if (damageShoot > 1)
-        {
-        damageShoot--;
-    }
+        shootClock.restart(); if (damageShoot < 00)
+        {//Player is damaged
+        
+    } else {
+            damageShoot--;
+        }
     }
 
   
