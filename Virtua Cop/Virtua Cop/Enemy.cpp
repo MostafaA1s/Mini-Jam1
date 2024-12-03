@@ -57,6 +57,7 @@ void Enemy::Shoot()
 
 			p->Damage(1);
 			damageShoot = 3;
+
 		}
 		else
 		{

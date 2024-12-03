@@ -13,6 +13,7 @@ public:
 	bool shoot();
 	void reload();
 	int getHelath();
+	void setHelath(int health);
 	void Damage(int helath);
 
 };

@@ -44,10 +44,14 @@ int Player::getHelath()
 	return helath;
 }
 
+void Player::setHelath(int health)
+{
+	this->helath = helath;
+}
+
 void Player::Damage(int h)
 {
 	helath -= h;
-	std::cout <<"waaaaaaaaaaaaaaaaa222222\n";
 
 	if (helath <= 0)
 	{

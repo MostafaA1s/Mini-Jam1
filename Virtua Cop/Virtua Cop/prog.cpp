@@ -6,7 +6,7 @@
 #include "TextureHelper.h"
 #include "Enemy.h"
 
-enum GameState { UNDIF, MENU, GAME, EXIT };
+enum GameState { UNDIF, MENU, GAME, EXIT, TEAM };
 GameState gameState = GameState::MENU;
 Player player;
 list<Enemy> enemies;
@@ -26,6 +26,12 @@ Sprite bk, fg;
 vector<Sprite> hearts;
 
 //sf::Texture heartTexture;
+//
+// 
+// 
+//void restart() {
+//	player.setHelath(1);
+//}
 
 void initializeHearts(int initialHealth) {
 
@@ -40,9 +46,15 @@ void initializeHearts(int initialHealth) {
 	}
 }
 
-void updateHearts(int currentHealth) {
+void updateHearts(int currentHealth, sf::Window& window) {
 	for (int i = 0; i < hearts.size(); ++i) {
 		hearts[i].setColor(i < currentHealth ? sf::Color::White : sf::Color(0, 0, 0, 100)); // Dim hearts that are "lost"
+	}
+	if (currentHealth <= 0) {
+		//gameState = MENU;
+		window.close();
+
+		
 	}
 }
 
@@ -60,20 +72,32 @@ void renderMenu(sf::RenderWindow& window, GameState& gameState) {
 		return;
 	}
 
-	sf::Text title("Virtua Cop Clone", font, 50);
-	title.setPosition(300, 100);
-	title.setFillColor(sf::Color::White);
 
-	sf::Text startOption("Press Enter to Start", font, 30);
-	startOption.setPosition(300, 300);
-	startOption.setFillColor(sf::Color::White);
+	//sf::Text title("Virtua Cop Clone", font, 50);
+	//title.setPosition(300, 100);
+	//title.setFillColor(sf::Color::White);
+
+	//sf::Text startOption("Press Enter to Start", font, 30);
+	//startOption.setPosition(300, 300);
+	//startOption.setFillColor(sf::Color::White);
+	
+	sf::Sprite mainMenuSprite;
+	TextureHelper::getInstance().loadTexture("Data/MainMenu.png", mainMenuSprite);
+	mainMenuSprite.setOrigin(mainMenuSprite.getGlobalBounds().width / 2, mainMenuSprite.getGlobalBounds().height / 2);
+	mainMenuSprite.setPosition(window.getSize().x/2, window.getSize().y / 2);
+
+
+
+
 
 	window.clear();
-	window.draw(title);
-	window.draw(startOption);
+	/*window.draw(title);
+	window.draw(startOption);*/
+	window.draw(mainMenuSprite);
 	window.display();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		//restart();
 		gameState = GAME;
 	}
 }
@@ -193,6 +217,21 @@ void HandelPlayerInput(sf::Window& window)
 			gameState = GAME;
 		}
 
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T) && gameState == GameState::MENU)
+		{
+			gameState = TEAM;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && gameState == GameState::TEAM) {
+			gameState = MENU;
+			
+
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && gameState == GameState::MENU) {
+
+			window.close();
+		}
+
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
 			if (event.mouseButton.button == sf::Mouse::Left)
@@ -214,7 +253,7 @@ void HandelPlayerInput(sf::Window& window)
 
 void GameLoop(sf::RenderWindow& window)
 {
-	updateHearts(player.getHelath());
+	updateHearts(player.getHelath(),window);
 
 	window.clear();
 	window.draw(bk);
@@ -268,9 +307,22 @@ void Update(sf::RenderWindow& window, float& elapsedTime, float timeSt)
 			GameLoop(window);
 
 		}
-		else if (gameState == EXIT)
+		
+		else if (gameState == EXIT )
 		{
 			window.close();
+		}
+		else if (gameState == TEAM)
+		{
+			sf::Sprite teamSprite;
+			TextureHelper::getInstance().loadTexture("Data/Team.png", teamSprite);
+			teamSprite.setOrigin(teamSprite.getGlobalBounds().width / 2, teamSprite.getGlobalBounds().height / 2);
+			teamSprite.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+			window.clear();
+			window.draw(teamSprite);
+			window.display();
+
+
 		}
 
 
