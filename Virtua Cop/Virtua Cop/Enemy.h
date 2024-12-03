@@ -1,5 +1,8 @@
 #pragma once
 #include "Human.h"
+
+#include "Player.h"
+
 class Enemy : public Human
 {
 	/*
@@ -12,18 +15,21 @@ class Enemy : public Human
 		sf::Sprite indicator;
 		sf::Clock indicatorColorClock; // when can the indicator color changes
 		sf::Clock shootClock; // when can the enemy shoots
-
+		bool isAlive = true;
+		Player* p;
 		Enemy();
-		Enemy(int health, int damageShoot);
+		Enemy(int health, int damageShoot, Player* p);
 		~Enemy();
 		void Shoot();
 
-		void SpawnIndicator(const std::string& filePath, sf::Window& window);
+		void SpawnIndicator();
 
 		void UpdateIndicator();
 
-		void setEnemySprite(const std::string& filePath, sf::Window& window);
 
+		bool CheckCollision(const sf::Sprite& cursor);
+		void TakeDamage(int damage);
+		void Die();
 
 
 		

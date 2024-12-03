@@ -5,15 +5,15 @@ private:
 	int score = 0;
 	int helath = 4;
 	int bulletCount = 6;
-	void shoot();
-	void reload();
+
 
 public:
 	int getScore();
-	void setScore(int score);
-
+	void IncScore(int score);
+	bool shoot();
+	void reload();
 	int getHelath();
-	void setHelath(int helath);
+	void Damage(int helath);
 
 };
 
