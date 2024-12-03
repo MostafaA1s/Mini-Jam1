@@ -6,7 +6,7 @@
 #include "TextureHelper.h"
 #include "Enemy.h"
 
-enum GameState { UNDIF, MENU, GAME, EXIT };
+enum GameState { UNDIF, MENU, GAME, EXIT, TEAM };
 GameState gameState = GameState::MENU;
 Player player;
 list<Enemy> enemies;
@@ -26,11 +26,24 @@ Sprite bk, fg;
 vector<Sprite> hearts;
 
 //sf::Texture heartTexture;
+//void spawnEnemy()
+//{
+//	Enemy newEnemy(5, 1, &player);
+//
+//
+//	// Randomize position
+//
+//	float x = static_cast<float>(rand() % 1920);
+//	float y = static_cast<float>(rand() % 1080);
+//	newEnemy.sprite.setPosition(x, y);
+//
+//	enemies.push_back(newEnemy);
+//}
 
 void initializeHearts(int initialHealth) {
 
 
-	hearts.clear(); 
+	hearts.clear();
 	for (int i = 0; i < initialHealth; ++i) {
 		sf::Sprite heart;
 		TextureHelper::getInstance().loadTexture("Data/heart.png", heart);
@@ -53,30 +66,30 @@ void drawHearts(sf::RenderWindow& window) {
 }
 
 
-void renderMenu(sf::RenderWindow& window, GameState& gameState) {
-	sf::Font font;
-	if (!font.loadFromFile("Data/font.ttf")) {
-		std::cerr << "Error: Failed to load font.\n";
-		return;
-	}
-
-	sf::Text title("Virtua Cop Clone", font, 50);
-	title.setPosition(300, 100);
-	title.setFillColor(sf::Color::White);
-
-	sf::Text startOption("Press Enter to Start", font, 30);
-	startOption.setPosition(300, 300);
-	startOption.setFillColor(sf::Color::White);
-
-	window.clear();
-	window.draw(title);
-	window.draw(startOption);
-	window.display();
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-		gameState = GAME;
-	}
-}
+//void renderMenu(sf::RenderWindow& window, GameState& gameState) {
+//	sf::Font font;
+//	if (!font.loadFromFile("Data/font.ttf")) {
+//		std::cerr << "Error: Failed to load font.\n";
+//		return;
+//	}
+//
+//	sf::Text title("Virtua Cop Clone", font, 50);
+//	title.setPosition(300, 100);
+//	title.setFillColor(sf::Color::White);
+//
+//	sf::Text startOption("Press Enter to Start", font, 30);
+//	startOption.setPosition(300, 300);
+//	startOption.setFillColor(sf::Color::White);
+//
+//	window.clear();
+//	window.draw(title);
+//	window.draw(startOption);
+//	window.display();
+//
+//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+//		gameState = GAME;
+//	}
+//}
 
 void LoadAssets()
 {
@@ -111,19 +124,56 @@ void LoadFont()
 		return;
 	}
 }
-void renderMenu()
-{
+//void renderMenu()
+//{
+//
+//	//sf::Text title("Virtua Cop Clone", font, 50);
+//	//title.setPosition(300, 100);
+//	//title.setFillColor(sf::Color::White);
+//
+//	//sf::Text startOption("Press Enter to Start", font, 30);
+//	//startOption.setPosition(300, 300);
+//	//startOption.setFillColor(sf::Color::White);
+//	//renderer.AddTempDrawable(&title);
+//	//renderer.AddTempDrawable(&startOption);
+//
+//}
 
-	sf::Text title("Virtua Cop Clone", font, 50);
-	title.setPosition(300, 100);
-	title.setFillColor(sf::Color::White);
 
-	sf::Text startOption("Press Enter to Start", font, 30);
-	startOption.setPosition(300, 300);
-	startOption.setFillColor(sf::Color::White);
-	//renderer.AddTempDrawable(&title);
-	//renderer.AddTempDrawable(&startOption);
+void renderMenu(sf::RenderWindow& window, GameState& gameState) {
+	sf::Font font;
+	if (!font.loadFromFile("Data/font.ttf")) {
+		std::cerr << "Error: Failed to load font.\n";
+		return;
+	}
 
+
+	//sf::Text title("Virtua Cop Clone", font, 50);
+	//title.setPosition(300, 100);
+	//title.setFillColor(sf::Color::White);
+
+	//sf::Text startOption("Press Enter to Start", font, 30);
+	//startOption.setPosition(300, 300);
+	//startOption.setFillColor(sf::Color::White);
+
+	sf::Sprite mainMenuSprite;
+	TextureHelper::getInstance().loadTexture("Data/MainMenu.png", mainMenuSprite);
+	mainMenuSprite.setOrigin(mainMenuSprite.getGlobalBounds().width / 2, mainMenuSprite.getGlobalBounds().height / 2);
+	mainMenuSprite.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+
+
+
+
+
+	window.clear();
+
+	window.draw(mainMenuSprite);
+	window.display();
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		//restart();
+		gameState = GAME;
+	}
 }
 
 
@@ -142,10 +192,7 @@ void updateCursor(sf::Window& window) {
 
 void handleMouseClick() {
 
-	//if (cursorSprite.getGlobalBounds().intersects(enemy.getGlobalBounds())) {
-	//	std::cout << "Enemy hit!\n";
-	//	// Logic to reduce enemy health
-	//}
+
 	std::cout << "left clicked \n";
 
 	if (gameState == GAME)
@@ -155,6 +202,11 @@ void handleMouseClick() {
 			if (enemy.isAlive && enemy.CheckCollision(cursorSprite))
 			{
 				std::cout << "Enemy hit!\n";
+				//if (!enemy.isAlive) {
+				//	// Enemy died; spawn a new one
+				//	spawnEnemy();
+				//	enemies.remove(enemy);
+				//}
 			}
 		}
 	}
@@ -166,6 +218,8 @@ void handleMouseClick() {
 
 void LeftMouseClicked()
 {
+
+
 	if (gameState == GameState::GAME)
 		if (player.shoot())
 			handleMouseClick();
@@ -178,7 +232,7 @@ void RightMouseClicked()
 		player.reload();
 }
 
-void HandelPlayerInput(sf::Window& window)
+void HandelPlayerInput(sf::Window& window, Sound& ls, Sound& rs)
 {
 	updateCursor(window);
 	sf::Event event;
@@ -186,7 +240,14 @@ void HandelPlayerInput(sf::Window& window)
 		if (event.type == sf::Event::Closed)
 			window.close();
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::T) && gameState == GameState::MENU)
+		{
+			gameState = TEAM;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && gameState == GameState::MENU) {
 
+			window.close();
+		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && gameState == GameState::MENU)
 		{
@@ -197,11 +258,12 @@ void HandelPlayerInput(sf::Window& window)
 		{
 			if (event.mouseButton.button == sf::Mouse::Left)
 			{
+				ls.play();
 				LeftMouseClicked();
 			}
 			if (event.mouseButton.button == sf::Mouse::Right)
 			{
-
+				rs.play();
 				RightMouseClicked();
 			}
 
@@ -272,6 +334,18 @@ void Update(sf::RenderWindow& window, float& elapsedTime, float timeSt)
 		{
 			window.close();
 		}
+		else if (gameState == TEAM)
+		{
+			sf::Sprite teamSprite;
+			TextureHelper::getInstance().loadTexture("Data/Team.png", teamSprite);
+			teamSprite.setOrigin(teamSprite.getGlobalBounds().width / 2, teamSprite.getGlobalBounds().height / 2);
+			teamSprite.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+			window.clear();
+			window.draw(teamSprite);
+			window.display();
+
+
+		}
 
 
 	}
@@ -282,15 +356,29 @@ void Update(sf::RenderWindow& window, float& elapsedTime, float timeSt)
 
 int main()
 {
-	//sf::SoundBuffer music;
-	//if (music.loadFromFile("Data/1.mp3") == false)
-	//{
-	//	std::cerr << "Error: Could not load music" << "\n";
-	//}
-	//sf::Sound bkMusic(music);
-	//bkMusic.setVolume(30);
-	//bkMusic.setLoop(true);
-	//bkMusic.play();
+	sf::SoundBuffer music;
+	if (music.loadFromFile("Data/1.mp3") == false)
+	{
+		std::cerr << "Error: Could not load music" << "\n";
+	}
+	sf::Sound bkMusic(music);
+	bkMusic.setVolume(30);
+	bkMusic.setLoop(true);
+	bkMusic.play();
+	sf::SoundBuffer shootSound;
+	if (shootSound.loadFromFile("Data/shot.mp3") == false)
+	{
+		std::cerr << "Error: Could not load music" << "\n";
+	}
+	sf::Sound shootSoundPlayer(shootSound);
+
+	sf::SoundBuffer relodSound;
+	if (relodSound.loadFromFile("Data/reload.mp3") == false)
+	{
+		std::cerr << "Error: Could not load music" << "\n";
+	}
+	sf::Sound relodSoundPlayer(relodSound);
+
 
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "7aret el sakaeen");
 	window.setMouseCursorVisible(false);
@@ -310,8 +398,14 @@ int main()
 	bool started = false;
 
 	Enemy e1(1, 2, &player);
+	Enemy e2(2, 2, &player, 1500);
+
+	Enemy e3(3, 2, &player, 950);
+
 
 	enemies.push_back(e1);
+	enemies.push_back(e2);
+	enemies.push_back(e3);
 
 
 	// Main Loop
@@ -319,7 +413,7 @@ int main()
 	{
 		elapsedTime += clock.restart().asSeconds();
 
-		HandelPlayerInput(window);
+		HandelPlayerInput(window, shootSoundPlayer, relodSoundPlayer);
 
 
 		Update(window, elapsedTime, timeStep);

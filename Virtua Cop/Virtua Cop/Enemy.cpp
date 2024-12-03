@@ -7,7 +7,7 @@ Enemy::Enemy()
 {
 }
 
-Enemy::Enemy(int health, int damageShoot, Player* player)
+Enemy::Enemy(int health, int damageShoot, Player* player, float x , float y)
 {
 	this->health = health;
 	this->damageShoot = damageShoot;
@@ -15,8 +15,8 @@ Enemy::Enemy(int health, int damageShoot, Player* player)
 	TextureHelper::getInstance().loadTexture("Data/enemy.png", sprite);
 
 	sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
-	sprite.setPosition(350, 650);
-	sprite.setScale(0.4f, 0.4f);
+	sprite.setPosition(x, y);
+	sprite.setScale(0.35f, 0.35f);
 	SpawnIndicator();
 
 
