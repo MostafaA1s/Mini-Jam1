@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Renderer.h"
 
@@ -96,4 +96,5 @@ int main()
 	}
 
 	return 0;
+
 }
