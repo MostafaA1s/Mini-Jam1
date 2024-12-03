@@ -144,6 +144,11 @@
     <ClCompile Include="Player.cpp" />
 
     <ClCompile Include="prog.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Renderer.h" />
     <ClCompile Include="TextureHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
