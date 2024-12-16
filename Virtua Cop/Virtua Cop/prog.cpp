@@ -1,100 +1,59 @@
+#include "SFML/Graphics.hpp"
+#include <cmath> // For pow()
 #include <iostream>
-#include <SFML/Graphics.hpp>
-#include "Renderer.h"
+#include "Enemy.h"
 
-//#include <box2d/box2d.h>
+int main(int argc, char** argv) {
+    Enemy enemy;
+    sf::Sprite cursor;
+    enemy.HitCollision(cursor);
 
-void LeftMouseClicked()
-{
-	std::cout << "left clicked \n";
-}
+    sf::RenderWindow renderWindow(sf::VideoMode(1780, 1000), "Demo Game");
+    float translationSpeed = 0.3f; // Time for frame change
+    sf::Event event;
 
-void RightMouseClicked()
-{
-	std::cout << "right clicked \n";
-}
+    sf::Texture texture;
+    texture.loadFromFile("C:/Game Development/C++/VirtuaCop/Mini-Jam1/Virtua Cop/Assets/Animation/DeathAnimation.png");
+    int frameSizeY = 960;
+    sf::IntRect rectSourceSprite(0, 0, 540, frameSizeY); // Assuming width 540, height 960 per frame
+    sf::Sprite sprite(texture);
+    sprite.setTextureRect(rectSourceSprite);
 
-void HandelPlayerInput(sf::Window& window)
-{
+    sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+    sprite.setScale(0.5, 0.5);
+    sprite.setPosition(renderWindow.getSize().x / 2, renderWindow.getSize().y / 2);
 
-	sf::Event event;
-	while (window.pollEvent(event)) {
-		if (event.type == sf::Event::Closed)
-			window.close();
+    sf::Clock frameClock;
 
-		if (event.type == sf::Event::MouseButtonPressed)
-		{
-			if (event.mouseButton.button == sf::Mouse::Left)
-			{
+    
 
-				LeftMouseClicked();
-			}
-			if (event.mouseButton.button == sf::Mouse::Right)
-			{
+    int frameCount = 3;
+    int currentFrame = 0;
+    int frameSizeX = 540;
+  
 
-				RightMouseClicked();
-			}
+    while (renderWindow.isOpen()) {
+        while (renderWindow.pollEvent(event)) {
+            if (event.type == sf::Event::EventType::Closed)
+                renderWindow.close();
+        }
 
-		}
-	}
+        // Handle animation frame changes
+        if (frameClock.getElapsedTime().asSeconds() > translationSpeed) 
+        {
+            currentFrame = (currentFrame + 1) % frameCount; // Loop through 0, 1, 2
+            rectSourceSprite.left = currentFrame * frameSizeX;    // Update frame based on currentFrame
+            sprite.setTextureRect(rectSourceSprite);
+            frameClock.restart();
+        }
 
-	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    
+      
 
-	//if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	//{
-	//	std::cout << "left clicked \n";
-	//}
+        renderWindow.clear();
+        renderWindow.draw(sprite);
+        renderWindow.display();
+    }
 
-	//if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-	//{
-	//	std::cout << "right clicked \n";
-	//}
-}
-
-
-
-
-void Update(float& elapsedTime, float timeSt)
-{
-	if (elapsedTime >= timeSt)
-	{
-		elapsedTime = 0.0f;
-		
-	}
-}
-
-int main()
-{
-	int windowWidth = 1920;
-	int windowHeight = 1080;
-	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "7aret el sakaeen");
-	Renderer renderer;
-	window.setFramerateLimit(60);
-	float timeStep = 1.0f / 60.0f; // 60 FPS
-	sf::Clock clock;
-	float elapsedTime = 0.0f;
-
-	bool started = false;
-
-
-
-
-	// Main Loop
-	while (window.isOpen())
-	{
-		elapsedTime += clock.restart().asSeconds();
-
-		HandelPlayerInput(window);
-
-
-		Update(elapsedTime, timeStep);
-
-
-		// Rendering
-
-		renderer.Render(window);
-	}
-
-	return 0;
-
+    return 0;
 }

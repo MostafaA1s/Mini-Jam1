@@ -12,6 +12,7 @@ class Enemy : public Human
 		sf::Sprite indicator;
 		sf::Clock indicatorColorClock; // when can the indicator color changes
 		sf::Clock shootClock; // when can the enemy shoots
+		
 
 		Enemy();
 		Enemy(int health, int damageShoot);

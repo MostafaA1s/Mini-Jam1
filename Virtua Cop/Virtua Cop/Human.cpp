@@ -17,3 +17,15 @@ bool Human::HitCollision(sf::Sprite& cursor)
 	return false;
 
 }
+
+void Human::updateAnimationFrame()
+{
+	/*if (animationClock.getElapsedTime().asSeconds() > animationSpeed) {
+		currentFrame = (currentFrame + 1) % frameCount;
+		rectSourceSprite.left = currentFrame * animationSize.x;   
+		sprite.setTextureRect(rectSourceSprite);
+		animationClock.restart();
+	}*/
+}
+
+
