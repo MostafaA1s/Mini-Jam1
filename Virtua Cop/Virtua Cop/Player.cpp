@@ -56,5 +56,16 @@ void Player::Damage(int h)
 
 }
 
+#pragma region 16 december
+
+void Player::Reset()
+{
+	helath = 4; // Reset health to full
+	bulletCount = 6; // Reset ammo
+}
+#pragma endregion
+
+
+
 
 

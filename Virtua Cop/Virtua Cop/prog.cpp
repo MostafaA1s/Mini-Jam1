@@ -309,8 +309,7 @@ void HandelPlayerInput(sf::Window& window, Sound& ls, Sound& rs)
 			}
 		}
 #pragma endregion
-
-
+	
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && gameState == GameState::MENU)
 		{
 			gameState = GAME;
@@ -335,11 +334,34 @@ void HandelPlayerInput(sf::Window& window, Sound& ls, Sound& rs)
 
 
 
+void RestartGame()
+{
+	player.Reset();
+	enemies.clear();
+	Enemy e1(1, 2, &player);
+	Enemy e2(2, 2, &player, 1500);
 
+	Enemy e3(3, 2, &player, 950);
+
+	enemies.push_back(e1);
+	enemies.push_back(e2);
+	enemies.push_back(e3);
+
+	gameState = MENU;
+
+}
 void GameLoop(sf::RenderWindow& window)
 {
 	updateHearts(player.getHelath());
 
+#pragma region 16 december
+
+
+	if (player.getHelath() <= 0) {  // Check if player lost all health
+		RestartGame(); // Reset the game
+		return;
+	}
+#pragma endregion
 	window.clear();
 	window.draw(bk);
 
@@ -490,6 +512,8 @@ int main()
 
 
 		Update(window, elapsedTime, timeStep);
+
+
 
 
 	}

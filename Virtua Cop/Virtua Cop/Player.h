@@ -15,5 +15,7 @@ public:
 	int getHelath();
 	void Damage(int helath);
 
+	void Reset(); // 16 december
+
 };
 
