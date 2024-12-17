@@ -6,12 +6,13 @@
 #include "TextureHelper.h"
 #include "Enemy.h"
 
-enum GameState { UNDIF, MENU, GAME, EXIT, TEAM };
+enum GameState { UNDIF, MENU, GAME, EXIT, TEAM , PAUSE}; // 16 december
 GameState gameState = GameState::MENU;
 Player player;
 list<Enemy> enemies;
 sf::Font font;
 //Renderer renderer;
+vector<sf::Vector2i> buttonsPositions; // 16 december
 
 
 
@@ -101,6 +102,19 @@ void LoadAssets()
 	fg.setOrigin(fg.getGlobalBounds().width / 2, fg.getGlobalBounds().height / 2);
 	fg.setPosition(windowWidth / 2, windowHeight / 2 - 5);
 
+
+	buttonsPositions.push_back(sf::Vector2i(715, 404));
+	buttonsPositions.push_back(sf::Vector2i(1204, 514));
+	buttonsPositions.push_back(sf::Vector2i(715, 575));
+	buttonsPositions.push_back(sf::Vector2i(1204, 678));
+	buttonsPositions.push_back(sf::Vector2i(715, 743));
+	buttonsPositions.push_back(sf::Vector2i(1204, 841));
+	
+	
+
+
+	
+	
 	//TextureHelper::getInstance().loadTexture("Data/enemy.png", enemy);
 	//enemy.setScale(0.4f, 0.4f);
 
@@ -140,6 +154,29 @@ void LoadFont()
 //}
 
 
+GameState buttonClicked(sf::Vector2i mousePos)
+{
+	for (int i = 0; i < 6; i += 2)
+	{
+		if (mousePos.x > buttonsPositions[i].x && mousePos.x < buttonsPositions[i + 1].x &&
+			mousePos.y > buttonsPositions[i].y && mousePos.y < buttonsPositions[i + 1].y)
+		{
+			if (i == 0) return GAME; 
+			if (i == 2) return EXIT;  
+			if (i == 4) return TEAM; 
+		}
+	}
+	return MENU; 
+	/*if (mousePos.x > buttonsPositions[0].x && mousePos.x < buttonsPositions[1].x &&
+		mousePos.y > buttonsPositions[0].y && mousePos.y < buttonsPositions[1].y)
+		return GAME;
+	else if (mousePos.x > buttonsPositions[2].x && mousePos.x < buttonsPositions[3].x &&
+		mousePos.y > buttonsPositions[2].y && mousePos.y < buttonsPositions[3].y)
+		return EXIT;
+	else if (mousePos.x > buttonsPositions[4].x && mousePos.x < buttonsPositions[5].x &&
+		mousePos.y > buttonsPositions[4].y && mousePos.y < buttonsPositions[5].y)
+		return TEAM;*/
+}
 void renderMenu(sf::RenderWindow& window, GameState& gameState) {
 	sf::Font font;
 	if (!font.loadFromFile("Data/font.ttf")) {
@@ -165,6 +202,7 @@ void renderMenu(sf::RenderWindow& window, GameState& gameState) {
 
 
 
+
 	window.clear();
 
 	window.draw(mainMenuSprite);
@@ -174,7 +212,22 @@ void renderMenu(sf::RenderWindow& window, GameState& gameState) {
 		//restart();
 		gameState = GAME;
 	}
+#pragma region 16 december
+	
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (gameState == MENU || gameState == TEAM))
+	{
+	
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+		std::cout << "Mouse Position: (" << mousePosition.x << ", " << mousePosition.y << ")\n";
+#pragma region Start game button
+		gameState = buttonClicked(mousePosition);
+#pragma endregion
+
+	}
+#pragma endregion
 }
+
+
 
 
 sf::Sprite cursorSprite;
@@ -187,6 +240,8 @@ void updateCursor(sf::Window& window) {
 	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 	cursorSprite.setPosition(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 }
+
+
 
 
 
@@ -244,10 +299,17 @@ void HandelPlayerInput(sf::Window& window, Sound& ls, Sound& rs)
 		{
 			gameState = TEAM;
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && gameState == GameState::MENU) {
-
-			window.close();
+#pragma region 16 december
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+		{
+			
+			if (gameState == GameState::TEAM)
+			{
+				gameState = GameState::MENU;
+			}
 		}
+#pragma endregion
+
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && gameState == GameState::MENU)
 		{
@@ -323,9 +385,20 @@ void Update(sf::RenderWindow& window, float& elapsedTime, float timeSt)
 		if (gameState == MENU)
 		{
 			renderMenu(window, gameState);
+			window.setMouseCursorVisible(true);
+
+			//sf::Sprite menuCursor;
+			//TextureHelper::getInstance().loadTexture("Data/menucursor.png", menuCursor);
+			//menuCursor.setOrigin(menuCursor.getGlobalBounds().width / 2, menuCursor.getGlobalBounds().height / 2);
+			//menuCursor.setScale(1.f, 1.f);
+			//sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+			//menuCursor.setPosition(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
 		}
 		else if (gameState == GAME)
 		{
+			window.setMouseCursorVisible(false);
+
 			InitGame();
 			GameLoop(window);
 
