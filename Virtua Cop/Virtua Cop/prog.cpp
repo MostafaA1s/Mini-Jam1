@@ -13,8 +13,10 @@ list<Enemy> enemies;
 sf::Font font;
 //Renderer renderer;
 vector<sf::Vector2i> buttonsPositions; // 16 december
+bool isPaused = false; // 16 december
 
-
+sf::Clock pauseClock;
+bool pauseRequested = false;
 
 int windowWidth = 1920;
 int windowHeight = 1080;
@@ -329,6 +331,26 @@ void HandelPlayerInput(sf::Window& window, Sound& ls, Sound& rs)
 			}
 
 		}
+		if ((sf::Keyboard::isKeyPressed(sf::Keyboard::P) ||event.type == sf::Keyboard::P) && gameState == GameState::GAME)
+		{
+			sf::Text pauseText;
+			pauseText.setString("Paused");
+			pauseText.setOrigin(pauseText.getGlobalBounds().width / 2, pauseText.getGlobalBounds().height / 2);
+			
+			pauseText.setCharacterSize(69);
+			pauseText.setPosition(window.getSize().x / 2, window.getSize().y / 2);
+			pauseText.setFillColor(sf::Color::Red);
+				pauseRequested = !pauseRequested;
+				if (pauseRequested) 
+				{
+					isPaused = true;  // Pause the game
+					pauseClock.restart();  // Optionally track time during pause
+				}
+				else 
+				{
+					isPaused = false;  // Resume the game
+				}
+		}
 	}
 }
 
@@ -365,7 +387,7 @@ void GameLoop(sf::RenderWindow& window)
 	window.clear();
 	window.draw(bk);
 
-
+	if(gameState == GAME)
 	for (auto& enemy : enemies)
 	{
 		if (enemy.isAlive)
@@ -373,7 +395,7 @@ void GameLoop(sf::RenderWindow& window)
 			window.draw(enemy.sprite);
 			window.draw(enemy.indicator);
 			//enemy.updateAnimationFrame();
-			enemy.UpdateIndicator();
+			enemy.UpdateIndicator(isPaused);
 		}
 	}
 

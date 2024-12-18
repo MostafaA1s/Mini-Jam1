@@ -38,59 +38,84 @@ void Enemy::SpawnIndicator()
 	//indicator.setColor(sf::Color::Blue);
 
 }
+
 /// <summary>
-/// The enemy shoots once doesn't hit shoots again doesn't hit. 
-/// third he damages the player
+/// The enemy shoots once, doesn't hit, shoots again, doesn't hit.
+/// On the third attempt, the enemy damages the player.
 /// </summary>
-void Enemy::Shoot()
+void Enemy::Shoot(bool isPaused) // 16 december
 {
+	// Accumulate elapsed time only if not paused
+
+	if (isPaused)
+		return; // Do nothing when paused
+
 	float elapsed = shootClock.getElapsedTime().asSeconds();
-	//std::cout << elapsed << "\n";
 
-	if (elapsed > 1.f)
+	if (elapsed > 1.f) // Shoot every 1 second
 	{
-		//Player is damaged
-
-		if (damageShoot <= 0)
-		{//Player is damaged
+		if (damageShoot <= 1)
+		{
+			// Damage the player on the third shot
 			std::cout << "SHOOT PLAYER" << "\n";
-
 			p->Damage(1);
-			damageShoot = 3;
+			damageShoot = 3; // Reset the counter
 		}
 		else
 		{
-			std::cout << "  TRYING TO damagE" + damageShoot << "\n";
+			// Missed shot
+			std::cout << "TRYING TO DAMAGE: " << damageShoot << "\n";
 			damageShoot--;
-			shootClock.restart();
-
 		}
-	}
 
+		shootClock.restart(); // Restart clock after shooting
+	}
 }
 
+
 /// <summary>
-/// changing the color of the indicator over time
+/// Changes the color of the indicator over time.
 /// </summary>
+void Enemy::UpdateIndicator(bool isPaused) // 16 december
+{
+	static sf::Time totalPausedTime;     // Time accumulated while paused
+	static sf::Time pauseStartTime;      // When pause starts
 
-void Enemy::UpdateIndicator() {
-	float elapsed = indicatorColorClock.getElapsedTime().asSeconds();
+	if (isPaused)
+	{
+		// On pause, track the time when pausing started
+		if (pauseStartTime == sf::Time::Zero)
+		{
+			pauseStartTime = indicatorColorClock.getElapsedTime();
+		}
+		return; // Exit when paused
+	}
+	else if (pauseStartTime != sf::Time::Zero)
+	{
+		// On resume, add the paused duration to totalPausedTime
+		totalPausedTime += indicatorColorClock.getElapsedTime() - pauseStartTime;
+		pauseStartTime = sf::Time::Zero;
+	}
 
+	// Calculate effective elapsed time (excluding pauses)
+	float elapsed = (indicatorColorClock.getElapsedTime() - totalPausedTime).asSeconds();
+
+	// Update indicator colors based on elapsed time
 	if (elapsed > 6.f)
 	{
 		this->indicator.setColor(sf::Color::Red);
-		Shoot();
+		Shoot(isPaused); // Call Shoot when the time exceeds 6 seconds
 	}
-	else if (elapsed > 3.f) {
-
-
+	else if (elapsed > 3.f)
+	{
 		this->indicator.setColor(sf::Color::Yellow);
 	}
-	else if (elapsed > .5f) {
+	else if (elapsed > 0.5f)
+	{
 		this->indicator.setColor(sf::Color::Green);
 	}
-
 }
+
 
 bool Enemy::CheckCollision(const sf::Sprite& cursor)
 {

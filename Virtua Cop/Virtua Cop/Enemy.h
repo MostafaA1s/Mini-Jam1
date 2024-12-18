@@ -20,11 +20,11 @@ public:
 	Enemy();
 	Enemy(int health, int damageShoot, Player* p, float x = 550, float y = 600);
 	~Enemy();
-	void Shoot();
+	void Shoot(bool isPaused);
 
 	void SpawnIndicator();
 
-	void UpdateIndicator();
+	void UpdateIndicator(bool isPaused);
 
 
 	bool CheckCollision(const sf::Sprite& cursor);
